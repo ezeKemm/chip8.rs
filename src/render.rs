@@ -1,6 +1,10 @@
-use crate::Display;
-use crate::Pixel;
+#[derive(Debug, Default)]
+struct Display(Vec<Pixel>);
 
+#[derive(Debug, Default, Clone)]
+struct Pixel {
+    p: isize,
+}
 #[derive(Debug, Default)]
 pub struct Render {
     scale: usize,
@@ -35,7 +39,7 @@ impl Render {
             0: vec![Pixel::default(); width * height],
         };
     }
-    fn set_pixel(&mut self, mut x: usize, mut y: usize) -> isize {
+    pub fn set_pixel(&mut self, mut x: usize, mut y: usize) -> isize {
         if x > self.col {
             x -= self.col;
         } else if x < 0 {
@@ -55,18 +59,18 @@ impl Render {
         !self.display.0[i].p
     }
 
-    fn clear(&mut self) {
+    pub fn clear(&mut self) {
         self.constructor();
     }
 
-    fn render(&self) {
-        for (i, px) in self.display.0.iter().enumerate() {
+    pub fn render(&mut self) {
+        for i in 0..self.display.0.len() {
             let x = (i % self.col) * self.scale;
             let y = (i / self.col) * self.scale;
 
-            if px.p == 1 {
+            if self.display.0[i].p == 1 {
                 // set ui color correspondingly at this pixel
-                unimplemented!()
+                self.set_pixel(x, y);
             }
         }
     }
