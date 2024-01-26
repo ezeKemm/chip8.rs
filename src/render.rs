@@ -1,3 +1,9 @@
+use cursive::{
+    event::{Event, EventResult, Key},
+    theme::{BaseColor, Color, ColorStyle},
+    views::Printer,
+};
+
 #[derive(Debug, Default)]
 struct Display(Vec<Pixel>);
 
@@ -14,30 +20,25 @@ pub struct Render {
 }
 
 impl Render {
-    fn new(&self, scale: usize, row: usize, col: usize) -> Self {
-        Render {
+    pub fn new(scale: usize, row: usize, col: usize) -> Self {
+        let mut render = Render {
             scale,
             row,
             col,
             display: Display::default(),
-        }
+        };
+        render.constructor();
+        render
     }
 
-    fn constructor(&mut self) -> (usize, usize) {
+    fn constructor(&mut self) {
         let width = self.col * self.scale;
         let height = self.row * self.scale;
         self.display = Display {
             0: vec![Pixel::default(); width * height],
         };
 
-        return (width, height);
-    }
-    fn new_display(&mut self) {
-        let width = self.col * self.scale;
-        let height = self.row * self.scale;
-        self.display = Display {
-            0: vec![Pixel::default(); width * height],
-        };
+        // return (width, height);
     }
     pub fn set_pixel(&mut self, mut x: usize, mut y: usize) -> isize {
         if x > self.col {
@@ -73,5 +74,34 @@ impl Render {
                 self.set_pixel(x, y);
             }
         }
+    }
+}
+
+impl cursive::view::View for Render {
+    fn draw(&self, printer: &Printer) {
+        for i in 0..self.display.0.len() {
+            let x = (i % self.col) * self.scale;
+            let y = (i / self.col) * self.scale;
+
+            let mut color: Color;
+            if self.display.0[i].p == 1 {
+                // set ui color correspondingly at this pixel
+                color = Color::RgbLowRes(0, 0, 0);
+                self.set_pixel(x, y);
+            }
+            printer.with_color(
+                ColorStyle::new(Color::Dark(BaseColor::Black), color),
+                |printer| printer.print((x, y), ""),
+            );
+        }
+    }
+    fn on_event(&mut self, event: Event) -> EventResult {
+        match event {
+            Event::Char(char) => {}
+            _ => {}
+        }
+        let c = 'a';
+        let p = c.to_ascii_uppercase();
+        EventResult::Ignored
     }
 }

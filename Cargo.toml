@@ -7,4 +7,6 @@ edition = "2021"
 
 [dependencies]
 rand = "*"
-gtk = { version = "0.6.6", package = "gtk4", features = ["v4_8"] }
+# gtk = { version = "0.6.6", package = "gtk4", features = ["v4_8"] }
+cursive = "*"
+sdl2 = "*"
